@@ -8,7 +8,7 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ .Chart.Name }}
+      app.kubernetes.io/name: {{ .Chart.Name }}  # Ensure this matches the existing deployment
   template:
     metadata:
       labels:
@@ -17,19 +17,9 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          ports:
-            - name: http
-              containerPort: 80
-              protocol: TCP
           env:
             - name: APIKEY
               valueFrom:
                 secretKeyRef:
-                  name: weather-api-key  # Name of the secret
-                  key: APIKEY            # Key within the secret
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}  # Assuming you have defined resources in values.yaml
-          livenessProbe:
-            {{- toYaml .Values.livenessProbe | nindent 12 }}  # Optional: Add liveness probe if defined
-          readinessProbe:
-            {{- toYaml .Values.readinessProbe | nindent 12 }}  # Optional: Add readiness probe if defined
+                  name: weather-api-key      # Secret name
+                  key: APIKEY                # Key within the secret
