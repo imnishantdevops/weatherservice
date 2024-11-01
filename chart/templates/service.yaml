@@ -8,4 +8,4 @@ spec:
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.port }}
   selector:
-    app: {{ .Release.Name }}-weather-service
+    app.kubernetes.io/name: {{ .Release.Name }}-weather-pod  # Updated selector
