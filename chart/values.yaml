@@ -53,6 +53,7 @@ resources:
     cpu: 100m
     memory: 128Mi
 
+# Uncomment and configure liveness and readiness probes if needed
 # livenessProbe:
 #   httpGet:
 #     path: /
@@ -63,10 +64,11 @@ resources:
 #     port: http
 
 autoscaling:
-  enabled: false
+  enabled: true  # Set to true to enable HPA
   minReplicas: 1
   maxReplicas: 5
   targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80  # Add if memory utilization is to be considered
 
 volumes: []
 volumeMounts: []
