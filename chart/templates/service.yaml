@@ -3,9 +3,9 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-weather-service
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ .Values.service.type }}  # e.g., NodePort
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: {{ .Values.service.port }}
+    - port: {{ .Values.service.port }}  # e.g., 80
+      targetPort: {{ .Values.service.port }}  # e.g., 80
   selector:
-    app.kubernetes.io/name: {{ .Release.Name }}-weather-pod  # Updated selector
+    app.kubernetes.io/name: weather-pod  # Ensure this matches the pod labels
