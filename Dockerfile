@@ -16,7 +16,7 @@ COPY . .
 EXPOSE 3000
 
 # Define environment variables
-ENV PORT=3000
+ENV PORT=$PORT
 ENV API_KEY=$API_KEY
 
 # Command to run the application
