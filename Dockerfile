@@ -12,8 +12,8 @@ RUN npm install
 # Copy the rest of the application code to the working directory
 COPY . .
 
-# Expose port 7878
-EXPOSE 7878
+# Expose port 3000
+EXPOSE 3000
 
 # Define environment variables
 ENV PORT=7878
