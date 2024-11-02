@@ -43,7 +43,7 @@ ingress:
 env:
   API_KEY: "0463d36f8a64d3405f77ae069770d0a4"  # Your OpenWeatherMap API key
   API_URL: "http://api.openweathermap.org/data/2.5/weather"
-  Forecast_URL: "http://api.openweathermap.org/data/2.5/forecast"
+  FORECAST_URL: "http://api.openweathermap.org/data/2.5/forecast"
 
 resources:
   limits:
@@ -69,6 +69,24 @@ autoscaling:
   maxReplicas: 5
   targetCPUUtilizationPercentage: 80
   targetMemoryUtilizationPercentage: 80  # Add if memory utilization is to be considered
+
+hpa:
+  enabled: true  # Set to true or false to enable/disable HPA
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
 
 volumes: []
 volumeMounts: []
