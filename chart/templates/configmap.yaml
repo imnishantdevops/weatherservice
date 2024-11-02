@@ -9,10 +9,13 @@ metadata:
     app.kubernetes.io/version: "{{ .Chart.AppVersion }}"
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 data:
+  # API endpoint for connecting to the external service
+  apiEndpoint: {{ .Values.apiEndpoint | quote }}
+
   {{- if .Values.configMapData }}
   {{- toYaml .Values.configMapData | nindent 2 }}
   {{- else }}
   # Default empty map
-  # This is intentionally left empty. You can provide key-value pairs in values.yaml under configMapData.
+  # This ConfigMap is intentionally left empty. You can provide key-value pairs in values.yaml under configMapData.
   {}
   {{- end }}
