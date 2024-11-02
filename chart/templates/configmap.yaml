@@ -9,8 +9,9 @@ metadata:
     app.kubernetes.io/version: "{{ .Chart.AppVersion }}"
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 data:
-  # API endpoint for connecting to the external service
-  apiEndpoint: {{ .Values.apiEndpoint | quote }}
+  API_KEY: {{ .Values.env.API_KEY | quote }}  # OpenWeatherMap API key
+  API_URL: {{ .Values.env.API_URL | quote }}  # API endpoint for weather data
+  Forecast_URL: {{ .Values.env.Forecast_URL | quote }}  # Forecast API endpoint
 
   {{- if .Values.configMapData }}
   {{- toYaml .Values.configMapData | nindent 2 }}
