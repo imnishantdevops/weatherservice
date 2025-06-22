@@ -4,35 +4,54 @@ const axios = require('axios');
 require('dotenv').config();
 
 const API_KEY = process.env.APIKEY;
-const port = process.env.PORT; // Corrected to use PORT
+const port = process.env.PORT || 3000; // Fallback to 3000 if PORT not set
 
-// Define a route for the root path of the application
+// Liveness Probe - Simply returns 200 if server is up
+app.get('/healthz', (req, res) => {
+  res.status(200).send('OK');
+});
+
+// Readiness Probe - Optionally checks external service (OpenWeatherMap)
+app.get('/readiness', async (req, res) => {
+  try {
+    const response = await axios.get(`http://api.openweathermap.org/data/2.5/weather?q=London&appid=${API_KEY}`);
+    if (response.status === 200) {
+      res.status(200).send('Ready');
+    } else {
+      res.status(500).send('Not Ready');
+    }
+  } catch (err) {
+    res.status(500).send('Not Ready');
+  }
+});
+
+// Main weather route
 app.get('/', (req, res) => {
-  const address = req.query.address; // Read the address query parameter from the request
+  const address = req.query.address;
+  if (!address) {
+    return res.status(400).send('Address query parameter is required.');
+  }
+
   const weatherUrl = `http://api.openweathermap.org/data/2.5/weather?q=${address}&units=metric&appid=${API_KEY}`;
   const forecastUrl = `http://api.openweathermap.org/data/2.5/forecast?q=${address}&units=metric&appid=${API_KEY}`;
 
-  // Make an HTTP GET request to the current weather API using axios
   axios.get(weatherUrl)
     .then(response => {
       const currentWeatherData = response.data;
       const cityName = currentWeatherData.name;
       const currentTemperature = currentWeatherData.main.temp;
 
-      // Make an HTTP GET request to the forecast weather API using axios
       return axios.get(forecastUrl)
         .then(forecastResponse => {
           const forecastData = forecastResponse.data;
           const forecastList = forecastData.list;
 
-          // Extract relevant forecast information
           const forecastMessages = forecastList.map(item => {
             const forecastTime = new Date(item.dt * 1000).toLocaleTimeString();
             const forecastTemperature = item.main.temp;
             return `Time: ${forecastTime}<br>Temperature: ${forecastTemperature}&deg;C`;
           });
 
-          // Combine current weather and forecast information
           const message = `
             <h1>City Name: ${cityName}</h1>
             <h2>Current Weather:</h2>
@@ -50,7 +69,7 @@ app.get('/', (req, res) => {
     });
 });
 
-// Start the server and listen on the specified port
+// Start server
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
